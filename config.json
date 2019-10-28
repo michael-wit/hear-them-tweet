@@ -1,0 +1,15 @@
+{
+  "track_keys": [
+      "twitter",
+      "facebook",
+      "google",
+      "travel",
+      "art",
+      "music",
+      "photography",
+      "love",
+      "fashion",
+      "food"
+  ],
+  "http_port": "8080"
+}

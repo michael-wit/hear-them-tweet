@@ -1,0 +1,15 @@
+[package]
+name = "hear-them-tweet"
+version = "0.1.0"
+authors = ["Michael Wittner <miwittner2@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+actix = "0.8"
+actix-web = "1.0"
+actix-web-actors = "1.0"
+futures = "0.1"
+json = { version = "1", package = "serde_json" }
+serde = { version = "1", features = ["derive"] }
+tokio-core = "0.1"
+twitter-stream = "0.9.0"

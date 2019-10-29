@@ -18,7 +18,7 @@ pub fn create_listener(
         .for_each(move |json| {
             match json::from_str(&json) {
                 Ok(message) => match message {
-                    StreamMessage::Tweet(tweet) => {
+                    StreamMessage::Tweet(_tweet) => {
                         for key in track_keys.iter() {
                             // Right now just scanning the full json for the keyword.
                             // Twitter is not very specific how they tag the tweets.
@@ -26,29 +26,29 @@ pub fn create_listener(
                             // Can be improved by searching for 'full wowrd' and a smaller
                             // amount of fields.
                             if json.contains(key) {
-                                println!("{} lang: {}, id: {}", key, tweet.lang, tweet.id_str);
+                                //println!("{} lang: {}, id: {}", key, tweet.lang, tweet.id_str);
                                 key_sender
                                     .unbounded_send(UpdateMessage::NewTweet(key.to_owned()))
                                     .expect("tracking service alive");
                             }
                         }
                     }
-                    StreamMessage::Warning(warning) => {
-                        println!(
-                            "{}: {} full",
-                            warning.warning.code, warning.warning.percent_full
-                        );
+                    StreamMessage::Warning(_warning) => {
+                        // println!(
+                        //     "{}: {} full",
+                        //     warning.warning.code, warning.warning.percent_full
+                        // );
                     }
-                    StreamMessage::Limit(limit) => {
-                        println!("Limit Track {}", limit.limit.track);
+                    StreamMessage::Limit(_limit) => {
+                        //println!("Limit Track {}", limit.limit.track);
                     }
                     _ => {
-                        println!("other message: {}", json);
+                        //println!("other message: {}", json);
                     }
                 },
-                Err(e) => {
-                    println!("unparsed msg: {:?}", e);
-                    println!("{}", json);
+                Err(_e) => {
+                    //println!("unparsed msg: {:?}", e);
+                    //println!("{}", json);
                 }
             }
             Ok(())

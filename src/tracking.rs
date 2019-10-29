@@ -1,5 +1,6 @@
 use json::{json, Value};
 use std::collections::HashMap;
+use std::ops::{Div, Mul};
 
 const MIN_PER_HOUR: usize = 60;
 const HOURS_PER_DAY: usize = 24;
@@ -103,6 +104,47 @@ impl Tracking {
         };
     }
 
+    pub fn get_lables(&self, first_empty: bool) -> Vec<String> {
+        let capacity = self.key_index.len() + if first_empty { 1 } else { 0 };
+        let mut result = Vec::with_capacity(capacity);
+        result.resize(capacity, "".to_string());
+        for (k, &i) in self.key_index.iter() {
+            let index = i + if first_empty { 1 } else { 0 };
+            result[index] = k.to_string();
+        }
+        result
+    }
+
+    pub fn get_hourly_moving_avg(&self) -> Vec<String> {
+        let mut result = Vec::new();
+        result.push("avrg Tw/min".to_string());
+        for (avrg, _, _) in self.trend_by_minute.iter() {
+            let rounded_avrg = avrg.mul(10f64).round().div(10f64);
+            result.push(rounded_avrg.to_string());
+        }
+        result
+    }
+
+    pub fn get_hourly_trend(&self) -> Vec<String> {
+        let mut result = Vec::new();
+        result.push("Trend".to_string());
+        for (_, trend, _) in self.trend_by_minute.iter() {
+            let rounded_trend = trend.mul(10f64).round().div(10f64);
+            result.push(format!("{}%", rounded_trend));
+        }
+        result
+    }
+
+    pub fn get_hourly_total(&self) -> Vec<String> {
+        let mut result = Vec::new();
+        result.push("Tw/h".to_string());
+        for (i, (_, _, sum)) in self.trend_by_minute.iter().enumerate() {
+            let total = self.one_hour[i][self.minute_count] + *sum;
+            result.push(total.to_string());
+        }
+        result
+    }
+
     /// Function to be called every minute to process data
     /// Basically agregating current counts into minute slots.
     /// Also handling minute/hour/day overflows and calculating
@@ -128,7 +170,7 @@ impl Tracking {
             *sum += new - old;
             *mav = *sum as f64 / minute_level as f64;
             if *mav != 0f64 {
-                *trend = ((new as f64 / minute_level as f64) - *mav) / *mav * 100f64;
+                *trend = (new as f64 - *mav) / *mav * 100f64;
             }
         }
 
@@ -161,7 +203,7 @@ impl Tracking {
             *sum += new - old;
             *mav = *sum as f64 / hour_level as f64;
             if *mav != 0f64 {
-                *trend = ((new as f64 / hour_level as f64) - *mav) / *mav * 100f64;
+                *trend = (new as f64 - *mav) / *mav * 100f64;
             }
         }
 
@@ -194,7 +236,7 @@ impl Tracking {
             *sum += new - old;
             *mav = *sum as f64 / day_level as f64;
             if *mav != 0f64 {
-                *trend = ((new as f64 / day_level as f64) - *mav) / *mav * 100f64;
+                *trend = (new as f64 - *mav) / *mav * 100f64;
             }
         }
 
@@ -279,5 +321,8 @@ fn next_minute() {
     assert_eq!(tracking.one_hour[0][1], 1);
     assert_eq!(tracking.trend_by_minute[0], (2f64, 0f64, 2u64));
     tracking.minute_complete();
-    assert_eq!(tracking.trend_by_minute[0], (1.5f64, -66.66666666666666, 3u64));
+    assert_eq!(
+        tracking.trend_by_minute[0],
+        (1.5f64, -33.33333333333333, 3u64)
+    );
 }

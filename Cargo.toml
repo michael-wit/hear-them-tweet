@@ -11,5 +11,7 @@ actix-web-actors = "1.0"
 futures = "0.1"
 json = { version = "1", package = "serde_json" }
 serde = { version = "1", features = ["derive"] }
+termion = "1.5"
 tokio-core = "0.1"
+tui = "0.5"
 twitter-stream = "0.9.0"

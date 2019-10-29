@@ -18,8 +18,16 @@
 
 * The 'config.json' file can be edited to change the list of keywords or the http port.
 
+## Dashboard
+
+A simple terminal based dashboard shows the:
+* Average Tweets per minute (updates every minute, first time after one minute)
+* A simple trend - how much the last minutes differs from the average in percent (updates every minute, first time after two minutes)
+* The total number of tweets of the last hour
+
 ## Run
 
+Make terminal quite wide and clear screen, then:
 ```bash
 cargo run
 ```

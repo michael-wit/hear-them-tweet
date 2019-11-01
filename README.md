@@ -27,7 +27,7 @@ A simple terminal based dashboard shows the:
 
 ## Run
 
-Make terminal quite wide and clear screen, then:
+Make terminal quite wide, then:
 ```bash
 cargo run
 ```

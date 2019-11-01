@@ -15,6 +15,8 @@ pub struct Dashboard {
 
 impl Dashboard {
     pub fn new() -> Self {
+        // Clearing terminal
+        print!("{}[2J", 27 as char);
         let stdout = io::stdout().into_raw_mode().expect("Stdout available");
         let backend = TermionBackend::new(stdout);
         let mut terminal = Terminal::new(backend).expect("Terminal created");
